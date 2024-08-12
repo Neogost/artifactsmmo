@@ -1,0 +1,22 @@
+package artifactsmmo.models.Schema;
+
+import artifactsmmo.models.entity.Character;
+import artifactsmmo.models.entity.Cooldown;
+import artifactsmmo.models.entity.Details;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class SkillDataSchema {
+
+    @JsonProperty("cooldown")
+    private Cooldown cooldown;
+
+    @JsonProperty("details")
+    private Details details;
+
+    @JsonProperty("character")
+    private Character character;
+}
