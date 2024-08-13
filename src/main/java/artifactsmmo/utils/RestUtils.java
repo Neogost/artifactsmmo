@@ -46,7 +46,9 @@ public class RestUtils {
     String ITEM = "items/%s";
 
 
-    String ALL_MAPS = "maps/";
+    String MAPS = "maps/";
+    // X et Y
+    String MAP = "maps/%s/%s";
 
     public HttpEntity<Object> entityHeader(Map body) {
         HttpHeaders headers = new HttpHeaders();
@@ -75,8 +77,8 @@ public class RestUtils {
     public String getMyCharactersUrl() {
         return getDomain() + MY_CHARACTERS_URL;
     }
-    public String getAllMapsUrl() {
-        return getDomain() + ALL_MAPS;
+    public String getMapsUrl() {
+        return getDomain() + MAPS;
     }
 
     public String getMyCharacterMoveUrl() {
