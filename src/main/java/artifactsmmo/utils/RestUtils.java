@@ -132,4 +132,7 @@ public class RestUtils {
         return getDomain() + RESOURCE;
     }
 
+    public String getMapUrl() {
+        return getDomain() + MAP;
+    }
 }
