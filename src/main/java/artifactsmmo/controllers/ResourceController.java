@@ -19,7 +19,7 @@ public class ResourceController {
     public List<Resource> getAllResources() {
         try {
             LOGGER.info("Getting the all resources of the game");
-            return resourceService.getAllRessources(null, 30, 1, null, 1, 50, null);
+            return resourceService.getAllResources(null, 30, 1, null, 1, 50, null);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }

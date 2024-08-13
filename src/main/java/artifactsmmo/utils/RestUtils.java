@@ -37,6 +37,7 @@ public class RestUtils {
     String MY_CHARACTER_GATHERING = "my/%s/action/gathering";
 
     String RESOURCES = "resources/";
+    String RESOURCE = "resource/{code}";
 
     String MONSTERS = "monsters/";
 
@@ -126,4 +127,9 @@ public class RestUtils {
     public String getMyCharacterCraftingUrl() {
         return getDomain() + MY_CHARACTER_CRAFTING;
     }
+
+    public String getResourceUrl() {
+        return getDomain() + RESOURCE;
+    }
+
 }

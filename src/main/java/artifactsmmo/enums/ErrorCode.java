@@ -2,6 +2,12 @@ package artifactsmmo.enums;
 
 public enum ErrorCode {
     MAP_NOT_FOUND(404, "Map not found"),
+    MAPS_NOT_FOUND(404, "Maps not found"),
+    RESOURCE_NOT_FOUND(404, "Resource not found"),
+    RESOURCES_NOT_FOUND(404, "Resources not found"),
+    ITEM_NOT_FOUND(404,"Items not found." ),
+    ITEMS_NOT_FOUND(404,"Items not found." ),
+
 
     TRANSACTION_ALREADY_IN_PROGRESS(461,"A transaction is already in progress with this item/your golds in your bank."),
     MISSING_ITEM(478, "Missing item or insufficient quantity in your inventory."),
