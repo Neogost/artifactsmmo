@@ -1,7 +1,9 @@
 package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
+import artifactsmmo.models.entity.Server;
 import artifactsmmo.models.response.CreateAccountResponse;
+import artifactsmmo.models.response.StatusResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,37 @@ public class AccountService {
         }
     }
 
+    /**
+     * Récupère les informations sur le statut du serveur en envoyant une requête GET à un service REST.
+     * <p>
+     * Cette méthode construit l'URL pour la requête en utilisant une URL fournie par un utilitaire de configuration,
+     * envoie une requête GET pour obtenir le statut du serveur, et retourne un objet {@link Server} contenant les détails
+     * du statut. La méthode utilise des entêtes HTTP sans token pour la requête. En cas de succès, elle renvoie les informations
+     * sur le serveur extraites de la réponse. En cas d'échec ou d'erreur HTTP, une exception est gérée et `null` est retourné.
+     * </p>
+     *
+     * @return un objet {@link Server} représentant les informations sur le statut du serveur, ou `null` en cas d'erreur ou si le
+     *         serveur ne peut être récupéré.
+     * @throws HttpClientErrorException si une erreur HTTP se produit lors de l'appel au service REST.
+     */
+    public Server getStatus() {
+        LOGGER.debug("Entry in getStatus");
+
+        try {
+            String url = String.format(restUtils.getStatusUrl());
+            HttpEntity<String> entity = restUtils.entityHeaderWithoutToken();
+
+            ResponseEntity<StatusResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, StatusResponse.class);
+            LOGGER.info("GET {} : status : {}", url, response.getStatusCode());
+
+            return Objects.requireNonNull(response.getBody()).getServer();
+
+        } catch (HttpClientErrorException e) {
+            LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage(), e);
+            handleException(e);
+            return null;
+        }
+    }
 
     /**
      * Gère les exceptions {@link HttpClientErrorException} en fonction du code d'état HTTP.

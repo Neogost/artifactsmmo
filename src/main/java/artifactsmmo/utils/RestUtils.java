@@ -192,4 +192,7 @@ public class RestUtils {
     public String getMyAccountChangePasswordUrl() {
         return  getDomain() + MY_ACCOUNT_CHANGE_PASSWORD;
     }
+    public String getStatusUrl() {
+        return  getDomain();
+    }
 }
