@@ -23,6 +23,7 @@ public enum ErrorCode {
     TOKEN_GENERATION_FAIL(455,"Token generation failed." ),
     USERNAME_ALREADY_USED(456, "Username already used."),
     EMAIL_ALREADY_USED(457, "Email already used."),
+    USE_DIFFERENT_PASSWORD(458, "Use a different password."),
 
     TRANSACTION_ALREADY_IN_PROGRESS(461,"A transaction is already in progress with this item/your golds in your bank."),
     MISSING_ITEM(478, "Missing item or insufficient quantity in your inventory."),

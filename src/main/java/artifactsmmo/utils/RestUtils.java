@@ -34,6 +34,8 @@ public class RestUtils {
 
 
     String MY_ACCOUNT_BANK_ITEMS = "my/bank/items";
+    String MY_ACCOUNT_BANK_GOLD = "my/bank/gold";
+    String MY_ACCOUNT_CHANGE_PASSWORD = "my/change_password";
 
     String GE_ITEMS = "ge/";
     String GE_ITEM = "ge/%s";
@@ -181,5 +183,13 @@ public class RestUtils {
 
     public String getCharacterCreateUrl() {
         return getDomain() + CHARACTERS_CREATE_URL;
+    }
+
+    public String getMyAccountBankGoldUrl() {
+        return getDomain() + MY_ACCOUNT_BANK_GOLD;
+    }
+
+    public String getMyAccountChangePasswordUrl() {
+        return  getDomain() + MY_ACCOUNT_CHANGE_PASSWORD;
     }
 }
