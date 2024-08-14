@@ -12,7 +12,10 @@ import java.util.Map;
 public class RestUtils {
 
     /* %s = name of the character */
-    String CHARACTERS_URL = "characters/%s";
+    String CHARACTER_URL = "characters/%s";
+    String CHARACTERS_URL = "characters";
+    String CHARACTERS_DELETE_URL = "characters/delete";
+    String CHARACTERS_CREATE_URL = "characters/create";
 
 
     String MY_CHARACTERS_URL = "my/characters";
@@ -96,8 +99,11 @@ public class RestUtils {
     public String getMyCharacterNewTaskUrl() {
         return getDomain() + MY_CHARACTER_NEW_TASK;
     }
-    public String getCharacter() {
+    public String getCharacterUrl() {
         return getDomain() + CHARACTERS_URL;
+    }
+    public String getAllCharacterUrl() {
+        return getDomain() + CHARACTER_URL;
     }
     public String getMyCharacterFightUrl() {
         return getDomain() + MY_CHARACTER_FIGHT;
@@ -167,5 +173,13 @@ public class RestUtils {
 
     public String getTokenUrl() {
         return getDomain() + TOKEN_GENERATE;
+    }
+
+    public String getCharacterDeleteUrl() {
+        return getDomain() + CHARACTERS_DELETE_URL;
+    }
+
+    public String getCharacterCreateUrl() {
+        return getDomain() + CHARACTERS_CREATE_URL;
     }
 }

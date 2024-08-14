@@ -7,8 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FindCharacterResponse {
-
+public class CharacterDeleteResponse {
     @JsonProperty("data")
     private Character character;
 }

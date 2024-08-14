@@ -12,6 +12,8 @@ public enum ErrorCode {
     EVENTS_NOT_FOUND(404,"Events not found." ),
     GE_ITEM_NOT_FOUND(404,"Item not found." ),
     GE_ITEMS_NOT_FOUND(404,"Items not found." ),
+    CHARACTER_NOT_FOUND(404,"Character not found." ),
+    CHARACTERS_NOT_FOUND(404,"Characters not found." ),
 
     TOKEN_GENERATION_FAIL(455,"Token generation failed." ),
     USERNAME_ALREADY_USED(456, "Username already used."),
@@ -24,8 +26,10 @@ public enum ErrorCode {
 
     CHARACTER_INVENTORY_FULL(497, "Character inventory is full."),
 
+    NAME_ALREADY_USED(494, "Name already used."),
+    MAX_CHARACTER(495, "Maximum characters reached on your account."),
     CHARACTER_AT_DESTINATION(490, "Character already at destination"),
-    CHARACTER_NOT_FOUND(498, "Character not found"),
+    CHARACTER_DELETE_NOT_FOUND(498, "Character not found"),
     CHARACTER_IN_COOLDOWN(499, "Character in cooldown"),
 
     ENTITY_NOT_FOUND(598, "Entity not found on this map.");
