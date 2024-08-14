@@ -50,6 +50,7 @@ public class RestUtils {
 
     String EVENTS = "events/";
 
+    String ACCOUNT_CREATE = "accounts/create";
 
     String MAPS = "maps/";
     // X et Y
@@ -156,5 +157,9 @@ public class RestUtils {
 
     public String getGeItemUrl() {
         return getDomain() + GE_ITEM;
+    }
+
+    public String getAccountCreateUrl() {
+        return getDomain() + ACCOUNT_CREATE;
     }
 }

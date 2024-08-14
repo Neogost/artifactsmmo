@@ -13,6 +13,9 @@ public enum ErrorCode {
     GE_ITEM_NOT_FOUND(404,"Item not found." ),
     GE_ITEMS_NOT_FOUND(404,"Items not found." ),
 
+    USERNAME_ALREADY_USED(456, "Username already used."),
+    EMAIL_ALREADY_USED(457, "Email already used."),
+
     TRANSACTION_ALREADY_IN_PROGRESS(461,"A transaction is already in progress with this item/your golds in your bank."),
     MISSING_ITEM(478, "Missing item or insufficient quantity in your inventory."),
     ACTION_ALREADY_IN_PROGRESS(486, "An action is already in progress by your character."),
