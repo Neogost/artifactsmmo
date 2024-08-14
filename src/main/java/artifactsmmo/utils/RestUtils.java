@@ -56,6 +56,8 @@ public class RestUtils {
     // X et Y
     String MAP = "maps/%s/%s";
 
+    String TOKEN_GENERATE = "token/";
+
     public HttpEntity<Object> entityHeader(Map body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -161,5 +163,9 @@ public class RestUtils {
 
     public String getAccountCreateUrl() {
         return getDomain() + ACCOUNT_CREATE;
+    }
+
+    public String getTokenUrl() {
+        return getDomain() + TOKEN_GENERATE;
     }
 }

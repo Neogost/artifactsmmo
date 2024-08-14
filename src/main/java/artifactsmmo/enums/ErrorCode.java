@@ -13,6 +13,7 @@ public enum ErrorCode {
     GE_ITEM_NOT_FOUND(404,"Item not found." ),
     GE_ITEMS_NOT_FOUND(404,"Items not found." ),
 
+    TOKEN_GENERATION_FAIL(455,"Token generation failed." ),
     USERNAME_ALREADY_USED(456, "Username already used."),
     EMAIL_ALREADY_USED(457, "Email already used."),
 
