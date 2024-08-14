@@ -1,10 +1,9 @@
 package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
-import artifactsmmo.models.entity.Item;
 import artifactsmmo.models.entity.Monster;
-import artifactsmmo.models.entity.Resource;
-import artifactsmmo.models.response.*;
+import artifactsmmo.models.response.MonsterResponse;
+import artifactsmmo.models.response.MonstersResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

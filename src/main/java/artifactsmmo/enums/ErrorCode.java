@@ -1,5 +1,10 @@
 package artifactsmmo.enums;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@ToString
+@Getter
 public enum ErrorCode {
     MAP_NOT_FOUND(404, "Map not found"),
     MAPS_NOT_FOUND(404, "Maps not found"),
@@ -40,19 +45,6 @@ public enum ErrorCode {
     ErrorCode(int code, String reason) {
         this.code = code;
         this.reason = reason;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    @Override
-    public String toString() {
-        return name() + " (" + code + "): " + reason;
     }
 
     public static ErrorCode fromCode(int code) {
