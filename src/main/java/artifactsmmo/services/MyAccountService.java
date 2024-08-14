@@ -4,8 +4,6 @@ import artifactsmmo.enums.ErrorCode;
 import artifactsmmo.models.entity.Gold;
 import artifactsmmo.models.entity.ItemSimple;
 import artifactsmmo.models.response.BankItemsResponse;
-import artifactsmmo.models.response.GeItemResponse;
-import artifactsmmo.models.response.GeItemsResponse;
 import artifactsmmo.models.response.GoldResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;

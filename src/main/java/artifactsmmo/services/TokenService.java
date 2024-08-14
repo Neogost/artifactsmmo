@@ -1,7 +1,6 @@
 package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
-import artifactsmmo.models.response.BankItemResponse;
 import artifactsmmo.models.response.GenerateTokenResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;

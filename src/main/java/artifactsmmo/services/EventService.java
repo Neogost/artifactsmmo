@@ -2,9 +2,7 @@ package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
 import artifactsmmo.models.entity.Event;
-import artifactsmmo.models.entity.Resource;
 import artifactsmmo.models.response.EventsResponse;
-import artifactsmmo.models.response.ResourcesResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
