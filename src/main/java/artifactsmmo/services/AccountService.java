@@ -61,8 +61,8 @@ public class AccountService {
         } catch (HttpClientErrorException e) {
             LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage(), e);
             handleException(e);
+            return null;
         }
-        return null;
     }
 
 
