@@ -1,4 +1,4 @@
-package artifactsmmo.models.Schema;
+package artifactsmmo.models.schema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

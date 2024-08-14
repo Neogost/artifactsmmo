@@ -1,7 +1,6 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.enums.ErrorCode;
-import artifactsmmo.models.Schema.CharacterFightDataSchema;
+import artifactsmmo.models.schema.CharacterFightDataSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;

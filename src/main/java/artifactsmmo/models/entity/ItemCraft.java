@@ -6,7 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BankItem {
+public class ItemCraft {
+
     @JsonProperty("code")
     private String code;
 

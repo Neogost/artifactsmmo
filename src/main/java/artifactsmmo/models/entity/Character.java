@@ -228,7 +228,7 @@ public class Character {
     private int inventoryMaxItems;
 
     @JsonProperty("inventory")
-    private List<InventoryItem> inventory;
+    private List<ItemInventory> inventory;
 
 
     public boolean onMap(Map map) {
@@ -240,8 +240,8 @@ public class Character {
 
     public boolean inventoryFull() {
         int quantity = 0;
-        for(InventoryItem inventoryItem : inventory) {
-            quantity += inventoryItem.getQuantity();
+        for(ItemInventory itemInventory : inventory) {
+            quantity += itemInventory.getQuantity();
         }
         return quantity >= inventoryMaxItems;
     }

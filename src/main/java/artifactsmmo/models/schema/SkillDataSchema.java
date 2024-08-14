@@ -1,4 +1,4 @@
-package artifactsmmo.models.Schema;
+package artifactsmmo.models.schema;
 
 import artifactsmmo.models.entity.Character;
 import artifactsmmo.models.entity.Cooldown;

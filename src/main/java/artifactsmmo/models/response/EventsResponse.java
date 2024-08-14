@@ -1,6 +1,6 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.entity.ItemSimple;
+import artifactsmmo.models.entity.Event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +9,10 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BankItemsResponse {
+public class EventsResponse {
 
     @JsonProperty("data")
-    private List<ItemSimple> items;
+    private List<Event> events;
 
     @JsonProperty("total")
     private int total;
@@ -25,4 +25,5 @@ public class BankItemsResponse {
 
     @JsonProperty("pages")
     private int pages;
+
 }

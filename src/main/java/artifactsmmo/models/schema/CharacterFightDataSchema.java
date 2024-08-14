@@ -1,24 +1,24 @@
-package artifactsmmo.models.Schema;
+package artifactsmmo.models.schema;
+
 
 import artifactsmmo.models.entity.Character;
 import artifactsmmo.models.entity.Cooldown;
-import artifactsmmo.models.entity.Destination;
+import artifactsmmo.models.entity.Fight;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-public class CharacterMovementDataSchema {
+public class CharacterFightDataSchema {
+
 
     @JsonProperty("cooldown")
     private Cooldown cooldown;
-    @JsonProperty("destination")
-    private Destination destination;
+
+    @JsonProperty("fight")
+    private Fight fight;
+
     @JsonProperty("character")
     private Character character;
-
-    // Getters and setters
 }

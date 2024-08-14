@@ -5,9 +5,13 @@ public enum ErrorCode {
     MAPS_NOT_FOUND(404, "Maps not found"),
     RESOURCE_NOT_FOUND(404, "Resource not found"),
     RESOURCES_NOT_FOUND(404, "Resources not found"),
-    ITEM_NOT_FOUND(404,"Items not found." ),
+    ITEM_NOT_FOUND(404,"Item not found." ),
     ITEMS_NOT_FOUND(404,"Items not found." ),
-
+    MONSTER_NOT_FOUND(404,"Monster not found." ),
+    MONSTERS_NOT_FOUND(404,"Monsters not found." ),
+    EVENTS_NOT_FOUND(404,"Events not found." ),
+    GE_ITEM_NOT_FOUND(404,"Item not found." ),
+    GE_ITEMS_NOT_FOUND(404,"Items not found." ),
 
     TRANSACTION_ALREADY_IN_PROGRESS(461,"A transaction is already in progress with this item/your golds in your bank."),
     MISSING_ITEM(478, "Missing item or insufficient quantity in your inventory."),

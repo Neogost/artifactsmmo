@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 @ToString
 public class MyCharactersList {
-    private List<Character> data;
+
+    private List<Character> characters;
 
 }

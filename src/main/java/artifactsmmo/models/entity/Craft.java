@@ -17,7 +17,7 @@ public class Craft {
     private int level;
 
     @JsonProperty("items")
-    private List<CraftItem> items;
+    private List<ItemCraft> items;
 
     @JsonProperty("quantity")
     private int quantity;

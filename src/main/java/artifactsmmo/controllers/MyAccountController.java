@@ -1,6 +1,6 @@
 package artifactsmmo.controllers;
 
-import artifactsmmo.models.entity.SimpleItem;
+import artifactsmmo.models.entity.ItemSimple;
 import artifactsmmo.services.MyAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ public class MyAccountController {
     private  static final Logger LOGGER = LoggerFactory.getLogger(MyAccountController.class);
 
 
-    public List<SimpleItem> getBankItems() {
+    public List<ItemSimple> getBankItems() {
         try {
             LOGGER.info("Getting the all bank items");
             return myAccountService.getBankItems(null, 1,50);

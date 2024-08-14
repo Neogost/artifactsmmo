@@ -1,8 +1,7 @@
 package artifactsmmo.services;
 
-import artifactsmmo.models.entity.SimpleItem;
+import artifactsmmo.models.entity.ItemSimple;
 import artifactsmmo.models.response.BankItemsResponse;
-import artifactsmmo.models.response.MonstersResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +27,8 @@ public class MyAccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyAccountService.class);
     private final RestUtils restUtils = new RestUtils();
 
-    public List<SimpleItem> getBankItems(String codeItem, int page, int size) {
-        List<SimpleItem> items = new ArrayList<>();
+    public List<ItemSimple> getBankItems(String codeItem, int page, int size) {
+        List<ItemSimple> items = new ArrayList<>();
         try {
             HttpEntity<String> entity = restUtils.entityHeader();
 

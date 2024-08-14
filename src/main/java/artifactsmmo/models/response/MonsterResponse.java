@@ -1,14 +1,14 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.schema.BankItemSchema;
+import artifactsmmo.models.entity.Monster;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
-public class BankItemResponse {
+@Getter
+public class MonsterResponse {
 
     @JsonProperty("data")
-    private BankItemSchema bankItemSchema;
+    private Monster monster;
 }

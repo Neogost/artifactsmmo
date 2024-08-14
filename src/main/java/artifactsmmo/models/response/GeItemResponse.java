@@ -1,14 +1,15 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.schema.BankItemSchema;
+import artifactsmmo.models.entity.GE;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
-public class BankItemResponse {
+@Getter
+public class GeItemResponse {
 
     @JsonProperty("data")
-    private BankItemSchema bankItemSchema;
+    private GE geItem;
+
 }

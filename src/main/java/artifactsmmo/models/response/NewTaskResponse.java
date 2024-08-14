@@ -1,6 +1,6 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.Schema.TaskDataSchema;
+import artifactsmmo.models.schema.TaskDataSchema;
 import lombok.Getter;
 import lombok.Setter;
 

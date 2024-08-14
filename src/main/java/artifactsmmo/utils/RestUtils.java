@@ -32,6 +32,8 @@ public class RestUtils {
 
     String MY_ACCOUNT_BANK_ITEMS = "my/bank/items";
 
+    String GE_ITEMS = "ge/";
+    String GE_ITEM = "ge/%s";
 
     /* %s = name of the character */
     String MY_CHARACTER_GATHERING = "my/%s/action/gathering";
@@ -40,10 +42,13 @@ public class RestUtils {
     String RESOURCE = "resource/{code}";
 
     String MONSTERS = "monsters/";
+    String MONSTER = "monsters/{code}";
 
     String ITEMS = "items/";
     /* %s = code */
     String ITEM = "items/%s";
+
+    String EVENTS = "events/";
 
 
     String MAPS = "maps/";
@@ -136,5 +141,20 @@ public class RestUtils {
 
     public String getMapUrl() {
         return getDomain() + MAP;
+    }
+
+    public String getMonsterUrl() {
+        return getDomain() + MONSTER;
+    }
+
+    public String getEventsUrl() {
+        return getDomain() + EVENTS;
+    }
+    public String getGeItemsUrl() {
+        return  getDomain() + GE_ITEMS;
+    }
+
+    public String getGeItemUrl() {
+        return getDomain() + GE_ITEM;
     }
 }

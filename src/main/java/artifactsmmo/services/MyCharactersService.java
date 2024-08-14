@@ -1,8 +1,8 @@
 package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
-import artifactsmmo.models.Schema.SkillDataSchema;
-import artifactsmmo.models.entity.InventoryItem;
+import artifactsmmo.models.schema.SkillDataSchema;
+import artifactsmmo.models.entity.ItemInventory;
 import artifactsmmo.models.response.*;
 import artifactsmmo.models.entity.MyCharactersList;
 import artifactsmmo.utils.RestUtils;
@@ -162,7 +162,7 @@ public class MyCharactersService {
 
     }
 
-    public BankItemResponse bankDeposit(String name, InventoryItem item, int quantity) {
+    public BankItemResponse bankDeposit(String name, ItemInventory item, int quantity) {
         String url = String.format(restUtils.getMyCharacterBankDepositUrl(), name);
 
         // Create the request body as a MultiValueMap

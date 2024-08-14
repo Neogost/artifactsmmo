@@ -1,6 +1,7 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.entity.ItemSimple;
+import artifactsmmo.models.entity.GE;
+import artifactsmmo.models.entity.Item;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +10,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BankItemsResponse {
+public class GeItemsResponse {
+
 
     @JsonProperty("data")
-    private List<ItemSimple> items;
+    private List<GE> geItems;
 
     @JsonProperty("total")
     private int total;

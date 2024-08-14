@@ -97,7 +97,7 @@ public class ItemService {
             }
         } catch (HttpClientErrorException e) {
             LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage(), e);
-            handleException(e, restUtils.getResourcesUrl());
+            handleException(e, restUtils.getItemsUrl());
         }
         return items;
     }
@@ -130,7 +130,7 @@ public class ItemService {
 
         } catch (HttpClientErrorException e) {
             LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage(), e);
-            handleException(e, restUtils.getResourceUrl());
+            handleException(e, restUtils.getItemUrl());
             return null;
         }
     }

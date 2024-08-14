@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CraftItem {
+public class ItemSimple {
 
     @JsonProperty("code")
     private String code;

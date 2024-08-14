@@ -1,17 +1,16 @@
 package artifactsmmo.models.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AdvancedItem extends Item{
+public class ItemAdvanced extends Item{
 
     private Monster target;
     private double damageDealOnTarget;
 
-    public AdvancedItem(Item item, Monster target, double damageDealOnTarget) {
+    public ItemAdvanced(Item item, Monster target, double damageDealOnTarget) {
         super(item.getName(),
                 item.getCode(),
                 item.getLevel(),

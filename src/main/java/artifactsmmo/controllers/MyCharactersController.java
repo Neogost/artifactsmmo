@@ -1,9 +1,9 @@
 package artifactsmmo.controllers;
 
 import artifactsmmo.enums.ErrorCode;
-import artifactsmmo.models.Schema.SkillDataSchema;
+import artifactsmmo.models.schema.SkillDataSchema;
 import artifactsmmo.models.entity.Character;
-import artifactsmmo.models.entity.InventoryItem;
+import artifactsmmo.models.entity.ItemInventory;
 import artifactsmmo.models.response.*;
 import artifactsmmo.models.entity.Map;
 import artifactsmmo.models.entity.MyCharactersList;
@@ -65,7 +65,7 @@ public class MyCharactersController {
         }
     }
 
-    public BankItemResponse bankDeposit(String name, InventoryItem item, int quantity) throws InterruptedException {
+    public BankItemResponse bankDeposit(String name, ItemInventory item, int quantity) throws InterruptedException {
 
         LOGGER.info("{} depose the item {} in {} quantity in bank !", name, item.getCode(), quantity);
         try {
