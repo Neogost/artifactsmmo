@@ -1,14 +1,15 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.schema.BankItemSchema;
+import artifactsmmo.models.schema.GoldTransactionSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BankItemResponse {
+public class MyCharacterDepositGoldBankResponse {
+
 
     @JsonProperty("data")
-    private BankItemSchema bankItemSchema;
+    private GoldTransactionSchema goldTransactionSchema;
 }
