@@ -4,7 +4,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import artifactsmmo.business.AppConfig;
 import org.springframework.http.MediaType;
-import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 
@@ -19,6 +18,8 @@ public class RestUtils {
 
 
     String MY_CHARACTERS_URL = "my/characters";
+    String MY_CHARACTERS_LOGS_URL = "my/logs";
+    String MY_CHARACTER_DELETE_ITEM_URL = "my/%s/action/delete";
     /* %s = name of the character */
     String MY_CHARACTER_FIGHT = "my/%s/action/fight";
     /* %s = name of the character */
@@ -30,7 +31,17 @@ public class RestUtils {
     /* %s = name of the character */
     String MY_CHARACTER_COMPLETE_TASK = "my/%s/action/task/complete";
     /* %s = name of the character */
+    String MY_CHARACTER_EXCHANGE_TASK = "my/%s/action/task/exchange";
+    /* %s = name of the character */
     String MY_CHARACTER_CRAFTING = "my/%s/action/crafting";
+    String MY_CHARACTER_GE_SELL_ITEM = "my/%s/action/ge/sell";
+    String MY_CHARACTER_GE_BUY_ITEM = "my/%s/action/ge/buy";
+    String MY_CHARACTER_WITHDRAW_GOLD_BANK = "my/%s/action/bank/withdraw/gold";
+    String MY_CHARACTER_WITHDRAW_BANK = "my/%s/action/bank/withdraw/";
+    String MY_CHARACTER_DEPOSITE_GOLD_BANK = "my/%s/action/bank/deposite/gold";
+    String MY_CHARACTER_RECYCLING = "my/%s/action/recycling/";
+    String MY_CHARACTER_UNEQUIP_ITEM = "my/%s/action/unequip/";
+    String MY_CHARACTER_EQUIP_ITEM = "my/%s/action/equip/";
 
 
     String MY_ACCOUNT_BANK_ITEMS = "my/bank/items";
@@ -67,7 +78,7 @@ public class RestUtils {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + AppConfig.getToken());
-        return new HttpEntity<>(body,headers);
+        return new HttpEntity<>(body, headers);
     }
 
 
@@ -76,6 +87,7 @@ public class RestUtils {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(headers);
     }
+
     public HttpEntity<String> entityHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -90,6 +102,7 @@ public class RestUtils {
     public String getMyCharactersUrl() {
         return getDomain() + MY_CHARACTERS_URL;
     }
+
     public String getMapsUrl() {
         return getDomain() + MAPS;
     }
@@ -98,18 +111,22 @@ public class RestUtils {
         return getDomain() + MY_CHARACTER_MOVE;
     }
 
-    public String getMyCharacterNewTaskUrl() {
+    public String getMyCharacterAcceptNewTaskUrl() {
         return getDomain() + MY_CHARACTER_NEW_TASK;
     }
+
     public String getCharacterUrl() {
         return getDomain() + CHARACTERS_URL;
     }
+
     public String getAllCharacterUrl() {
         return getDomain() + CHARACTER_URL;
     }
+
     public String getMyCharacterFightUrl() {
         return getDomain() + MY_CHARACTER_FIGHT;
     }
+
     public String getMyCharacterCompleteTaskUrl() {
         return getDomain() + MY_CHARACTER_COMPLETE_TASK;
     }
@@ -161,8 +178,9 @@ public class RestUtils {
     public String getEventsUrl() {
         return getDomain() + EVENTS;
     }
+
     public String getGeItemsUrl() {
-        return  getDomain() + GE_ITEMS;
+        return getDomain() + GE_ITEMS;
     }
 
     public String getGeItemUrl() {
@@ -190,9 +208,52 @@ public class RestUtils {
     }
 
     public String getMyAccountChangePasswordUrl() {
-        return  getDomain() + MY_ACCOUNT_CHANGE_PASSWORD;
+        return getDomain() + MY_ACCOUNT_CHANGE_PASSWORD;
     }
+
     public String getStatusUrl() {
-        return  getDomain();
+        return getDomain();
+    }
+
+    public String getMyCharactersLogsUrl() {
+        return getDomain() + MY_CHARACTERS_LOGS_URL;
+    }
+
+    public String getMyCharacterDeleteItemUrl() {
+        return getDomain() + MY_CHARACTER_DELETE_ITEM_URL;
+    }
+
+    public String getMyCharacterExchangeTaskUrl() {
+        return getDomain() + MY_CHARACTER_EXCHANGE_TASK;
+    }
+
+    public String getMyCharacterGeSellItemUrl() {
+        return getDomain() + MY_CHARACTER_GE_SELL_ITEM;
+    }
+
+    public String getMyCharacterGeBuyItemUrl() {
+        return getDomain() + MY_CHARACTER_GE_BUY_ITEM;
+    }
+
+    public String getMyCharacterWithdrawGoldBankUrl() {
+        return getDomain() + MY_CHARACTER_WITHDRAW_GOLD_BANK;
+    }
+
+    public String getMyCharacterDepositeGoldBankUrl() {
+        return getDomain() + MY_CHARACTER_DEPOSITE_GOLD_BANK;
+    }
+    public String getMyCharacterWithdrawBankUrl() {
+        return getDomain() + MY_CHARACTER_WITHDRAW_BANK;
+    }
+
+    public String getMyCharacterRecyclingUrl() {
+        return getDomain() + MY_CHARACTER_RECYCLING;
+    }
+
+    public String getMyCharacterUnequipItemUrl() {
+        return getDomain() + MY_CHARACTER_UNEQUIP_ITEM;
+    }
+    public String getMyCharacterEquipItemUrl() {
+        return getDomain() + MY_CHARACTER_EQUIP_ITEM;
     }
 }

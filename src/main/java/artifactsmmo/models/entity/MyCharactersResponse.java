@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class MyCharactersList {
+public class MyCharactersResponse {
 
     private List<Character> characters;
 

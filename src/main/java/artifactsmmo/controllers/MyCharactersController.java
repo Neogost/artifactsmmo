@@ -1,12 +1,11 @@
 package artifactsmmo.controllers;
 
 import artifactsmmo.enums.ErrorCode;
-import artifactsmmo.models.schema.SkillDataSchema;
+import artifactsmmo.models.schema.*;
 import artifactsmmo.models.entity.Character;
 import artifactsmmo.models.entity.ItemInventory;
 import artifactsmmo.models.response.*;
 import artifactsmmo.models.entity.Map;
-import artifactsmmo.models.entity.MyCharactersList;
 import artifactsmmo.services.CharacterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import artifactsmmo.services.MyCharactersService;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.List;
 
 @RestController
 public class MyCharactersController {
@@ -24,7 +25,7 @@ public class MyCharactersController {
     @Autowired
     private CharacterService characterService;
 
-    public MyCharactersList getMyCharacters() {
+    public List<Character> getMyCharacters() {
         LOGGER.info("Getting all my characters");
         try {
             return myCharactersService.getMyCharacters();
@@ -33,7 +34,7 @@ public class MyCharactersController {
         }
     }
 
-    public CharacterResponse move(String name, int x, int y) {
+    public CharacterMovementDataSchema move(String name, int x, int y) {
         LOGGER.info("Moving {} to 'x,y' : {},{}", name, x, y);
         try {
             return myCharactersService.move(name, x, y);
@@ -44,7 +45,7 @@ public class MyCharactersController {
     }
 
 
-    public CharacterResponse moveToMap(String name, Map map) {
+    public CharacterMovementDataSchema moveToMap(String name, Map map) {
         LOGGER.info("Moving {} to Map('x,y') : {},{}", name, map.getX(), map.getX());
         try {
             return myCharactersService.move(name, map.getX(), map.getY());
@@ -55,7 +56,7 @@ public class MyCharactersController {
     }
 
 
-    public NewTaskResponse acceptNewTask(String name) {
+    public TaskDataSchema acceptNewTask(String name) {
         LOGGER.info("{} accept a new task", name);
         try {
             return myCharactersService.acceptNewTask(name);
@@ -65,11 +66,11 @@ public class MyCharactersController {
         }
     }
 
-    public BankItemResponse bankDeposit(String name, ItemInventory item, int quantity) throws InterruptedException {
+    public BankItemSchema bankDeposit(String name, ItemInventory item, int quantity) throws InterruptedException {
 
         LOGGER.info("{} depose the item {} in {} quantity in bank !", name, item.getCode(), quantity);
         try {
-            return myCharactersService.bankDeposit(name, item, quantity);
+            return myCharactersService.bankDeposit(name, item.getCode(), quantity);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().value() == ErrorCode.MISSING_ITEM.getCode()) {
                 LOGGER.error(name + " as a missing item or insufficient quantity");
@@ -99,7 +100,7 @@ public class MyCharactersController {
         return null;
     }
 
-    public FightResponse fight(String name) {
+    public CharacterFightDataSchema fight(String name) {
         LOGGER.info("{} fight !", name);
         try {
             return myCharactersService.fight(name);
@@ -111,22 +112,22 @@ public class MyCharactersController {
         return null;
     }
 
-    public NewTaskResponse moveAndTakeNewTask(Character character, Map map) throws InterruptedException {
+    public TaskDataSchema moveAndTakeNewTask(Character character, Map map) throws InterruptedException {
         LOGGER.info("Moving {} to 'x,y' : {},{} and take a new task", character.getName(), map.getX(), map.getY());
         if (character.getX() != map.getX() || character.getY() != map.getY()) {
-            CharacterResponse result = moveToMap(character.getName(), map);
-            int cooldown = result.getCharacterMovementDataSchema().getCooldown().getRemainingSeconds();
+            CharacterMovementDataSchema result = moveToMap(character.getName(), map);
+            int cooldown = result.getCooldown().getRemainingSeconds();
             Thread.sleep(cooldown * 1000);
         }
         return acceptNewTask(character.getName());
     }
 
-    public TaskRewardResponse completeTask(String name) {
+    public TaskRewardDataSchema completeTask(String name) {
         LOGGER.info("{} complete a quest ! ", name);
         return myCharactersService.completeTask(name);
     }
 
-    public GatheringResponse gathering(String name) throws InterruptedException {
+    public MyCharacterGatheringResponse gathering(String name) throws InterruptedException {
         LOGGER.info("{} gather resource !", name);
         try {
             myCharactersService.gathering(name);

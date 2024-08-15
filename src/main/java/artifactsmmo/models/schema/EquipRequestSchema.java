@@ -1,22 +1,24 @@
 package artifactsmmo.models.schema;
 
-
 import artifactsmmo.models.entity.Character;
 import artifactsmmo.models.entity.Cooldown;
-import artifactsmmo.models.entity.Task;
+import artifactsmmo.models.entity.Item;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TaskDataSchema {
+public class EquipRequestSchema {
 
     @JsonProperty("cooldown")
     private Cooldown cooldown;
 
-    @JsonProperty("task")
-    private Task task;
+    @JsonProperty("slot")
+    private String slot;
+
+    @JsonProperty("item")
+    private Item item;
 
     @JsonProperty("character")
     private Character character;

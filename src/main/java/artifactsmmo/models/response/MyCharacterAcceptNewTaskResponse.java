@@ -1,14 +1,14 @@
 package artifactsmmo.models.response;
 
-import artifactsmmo.models.schema.CharacterFightDataSchema;
+import artifactsmmo.models.schema.TaskDataSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class FightResponse {
+public class MyCharacterAcceptNewTaskResponse {
 
     @JsonProperty("data")
-    private CharacterFightDataSchema characterFightDataSchema;
+    private TaskDataSchema taskDataSchema;
 }
