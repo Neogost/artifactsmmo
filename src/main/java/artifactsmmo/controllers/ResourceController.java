@@ -1,5 +1,6 @@
 package artifactsmmo.controllers;
 
+import artifactsmmo.enums.Skill;
 import artifactsmmo.models.entity.Resource;
 import artifactsmmo.services.ResourceService;
 import org.slf4j.Logger;
@@ -91,7 +92,7 @@ public class ResourceController {
      * @return une liste de ressources correspondant aux critères spécifiés.
      * @throws ResponseStatusException si une erreur se produit lors de la récupération des ressources, avec un statut HTTP 500.
      */
-    public List<Resource> getResources(String drop, int minLevel, int maxLevel, int page, int pageSize, String skill) {
+    public List<Resource> getResources(String drop, int minLevel, int maxLevel, int page, int pageSize, Skill skill) {
         LOGGER.info("Getting resources of the game");
 
         try {
@@ -103,7 +104,7 @@ public class ResourceController {
             validatePageSize(pageSize);
             validateSkillForResources(skill);
 
-            return resourceService.getAllResources(drop, minLevel, maxLevel, page, pageSize, skill);
+            return resourceService.getAllResources(drop, minLevel, maxLevel, page, pageSize, skill.getValue());
         } catch (Exception e) {
             LOGGER.error("Error fetching resources: {}", e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to fetch resources", e);
