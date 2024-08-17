@@ -39,7 +39,6 @@ public class ResourceService {
      * @param drop     Filtre optionnel basé sur le type de drop des ressources (peut être null).
      * @param maxLevel Filtre optionnel pour le niveau maximum des ressources (valeur par défaut : Integer.MAX_VALUE).
      * @param minLevel Filtre optionnel pour le niveau minimum des ressources (valeur par défaut : 0).
-     * @param name     Filtre optionnel basé sur le nom des ressources (peut être null).
      * @param page     Numéro de page pour la pagination (doit être supérieur ou égal à 1).
      * @param size     Nombre d'éléments par page (doit être supérieur à 0, valeur par défaut : 50).
      * @param skill    Filtre optionnel basé sur les compétences des ressources (peut être null).
@@ -49,9 +48,9 @@ public class ResourceService {
      *                                  loguées et traitées par la méthode {@link #handleException(HttpClientErrorException, String)}.
      */
 
-    public List<Resource> getAllResources(String drop, int maxLevel, int minLevel, String name, int page, int size, String skill) {
-        LOGGER.debug("Entry in getAllResources with parameters : drop={}, maxLevel={}, minLevel={}, name={}, page={}, size={}, skill={}",
-                drop, maxLevel, minLevel, name, page, size, skill);
+    public List<Resource> getAllResources(String drop, int maxLevel, int minLevel, int page, int size, String skill) {
+        LOGGER.debug("Entry in getAllResources with parameters : drop={}, maxLevel={}, minLevel={}, page={}, size={}, skill={}",
+                drop, maxLevel, minLevel, page, size, skill);
 
         List<Resource> resources = new ArrayList<>();
         try {
@@ -63,7 +62,6 @@ public class ResourceService {
                         .queryParamIfPresent("drop", Optional.ofNullable(drop))
                         .queryParamIfPresent("max_level", Optional.of(maxLevel))
                         .queryParamIfPresent("min_level", Optional.of(minLevel))
-                        .queryParamIfPresent("name", Optional.ofNullable(name))
                         .queryParamIfPresent("page", Optional.of(page))
                         .queryParamIfPresent("size", Optional.of(size))
                         .queryParamIfPresent("skill", Optional.ofNullable(skill))

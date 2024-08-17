@@ -1,6 +1,10 @@
 package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
+import artifactsmmo.exception.CharacterActionAlreadyInProgressException;
+import artifactsmmo.exception.CharacterInCooldownException;
+import artifactsmmo.exception.CharacterInventoryMissingItemException;
+import artifactsmmo.exception.CharacterTransitionAlreadyInProgressException;
 import artifactsmmo.models.entity.Character;
 import artifactsmmo.models.schema.*;
 import artifactsmmo.models.response.*;
@@ -783,11 +787,11 @@ public class MyCharactersService {
             case 460:
                 throw new RuntimeException(ErrorCode.INSUFFICIENT_GOLD_BANK.getReason(), e);
             case 461:
-                throw new RuntimeException(ErrorCode.TRANSACTION_ALREADY_IN_PROGRESS.getReason(), e);
+                throw new CharacterTransitionAlreadyInProgressException(ErrorCode.TRANSACTION_ALREADY_IN_PROGRESS.getReason(), e);
             case 473:
                 throw new RuntimeException(ErrorCode.ITEM_CANNOT_BE_RECYCLED.getReason(), e);
             case 478:
-                throw new RuntimeException(ErrorCode.MISSING_ITEM.getReason(), e);
+                throw new CharacterInventoryMissingItemException(ErrorCode.MISSING_ITEM.getReason(), e);
             case 480:
                 throw new RuntimeException(ErrorCode.NO_STOCK_ITEM.getReason(), e);
             case 482:
@@ -797,7 +801,7 @@ public class MyCharactersService {
             case 485:
                 throw new RuntimeException(ErrorCode.ITEM_ALREADY_EQUIPPED.getReason(), e);
             case 486:
-                throw new RuntimeException(ErrorCode.ACTION_ALREADY_IN_PROGRESS.getReason(), e);
+                throw new CharacterActionAlreadyInProgressException(ErrorCode.ACTION_ALREADY_IN_PROGRESS.getReason(), e);
             case 489:
                 throw new RuntimeException(ErrorCode.CHARACTER_ALREADY_HAS_TASK.getReason(), e);
             case 490:
@@ -815,7 +819,7 @@ public class MyCharactersService {
             case 498:
                 throw new RuntimeException(ErrorCode.CHARACTER_NOT_FOUND.getReason(), e);
             case 499:
-                throw new RuntimeException(ErrorCode.CHARACTER_IN_COOLDOWN.getReason(), e);
+                throw new CharacterInCooldownException(ErrorCode.CHARACTER_IN_COOLDOWN.getReason(), e);
             case 598:
                 if (url.equals(restUtils.getMyCharacterAcceptNewTaskUrl()) || url.equals(restUtils.getMyCharacterExchangeTaskUrl())) {
                     throw new RuntimeException(ErrorCode.TASKMASTER_MAP_NOT_FOUND.getReason(), e);
