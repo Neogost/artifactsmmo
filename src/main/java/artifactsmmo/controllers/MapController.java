@@ -36,8 +36,8 @@ public class MapController {
             validatePage(page);
             validatePageSize(size);
             validateContentCode(contentCode);
-
-            return mapService.getAllMaps(type.getValue(), contentCode, page, size);
+            String typeValue = type == null ? null : type.getValue();
+            return mapService.getAllMaps(typeValue, contentCode, page, size);
         } catch (
                 RuntimeException e) {
             LOGGER.error("Error fetching maps : {}", e.getMessage(), e);

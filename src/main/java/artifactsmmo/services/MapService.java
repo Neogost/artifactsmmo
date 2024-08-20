@@ -28,8 +28,11 @@ public class MapService {
     private RestTemplate restTemplate;
 
     private  static final Logger LOGGER = LoggerFactory.getLogger(MapService.class);
-    private final RestUtils restUtils = new RestUtils();
+    private RestUtils restUtils = new RestUtils();
 
+    public MapService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
     /**
      * Récupère toutes les cartes disponibles en paginant à travers les pages du service REST.
      *
@@ -62,7 +65,7 @@ public class MapService {
                 // Create URL with params
                 String url = UriComponentsBuilder.fromHttpUrl(restUtils.getMapsUrl())
                         .queryParamIfPresent("contentType", Optional.ofNullable(contentType))
-                        .queryParamIfPresent("contentCode", Optional.of(contentCode))
+                        .queryParamIfPresent("contentCode", Optional.ofNullable(contentCode))
                         .queryParamIfPresent("page", Optional.of(page))
                         .queryParamIfPresent("size", Optional.of(size))
                         .encode()

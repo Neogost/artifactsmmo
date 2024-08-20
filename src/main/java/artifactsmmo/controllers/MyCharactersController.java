@@ -347,7 +347,7 @@ public class MyCharactersController {
      * @throws InterruptedException if the thread is interrupted while waiting for the cooldown.
      */
     public TaskDataSchema moveAndTakeNewTask(Character character, Map map) throws InterruptedException {
-        LOGGER.info("Moving {} to 'x,y' : {},{} and take a new task", character.getName(), map.getX(), map.getY());
+        LOGGER.info("{} moving to 'x,y' : {},{} and take a new task", character.getName(), map.getX(), map.getY());
 
         if (validateIsRequireMovement(character, map)) {
             CharacterMovementDataSchema result = moveToMap(character.getName(), map);
@@ -355,6 +355,40 @@ public class MyCharactersController {
         }
         return acceptNewTask(character.getName());
     }
+
+
+    public BankItemSchema moveAndWithdrawBankItem(Character character, Map map, ItemSimple item) throws InterruptedException {
+        LOGGER.info("{} moving to 'x,y' : {},{} and withdraw item {} in {} quantity from bank",
+                character.getName(), map.getX(), map.getY(), item.getCode(), item.getQuantity());
+
+        if (validateIsRequireMovement(character, map)) {
+            CharacterMovementDataSchema result = moveToMap(character.getName(), map);
+            waitCooldown(result.getCooldown().getRemainingSeconds());
+        }
+        return withdrawItemFromBank(character.getName(), item);
+    }
+
+    public SkillDataSchema moveAndCraft(Character character, Map map, ItemSimple item) throws InterruptedException {
+        LOGGER.info("{} moving to 'x,y' : {},{} and craft item {}", character.getName(), map.getX(), map.getY(), item.getCode());
+
+        if (validateIsRequireMovement(character, map)) {
+            CharacterMovementDataSchema result = moveToMap(character.getName(), map);
+            waitCooldown(result.getCooldown().getRemainingSeconds());
+        }
+        return craft(character.getName(), item);
+    }
+
+
+    public SkillDataSchema moveAndGathering(Character character, Map map) throws InterruptedException {
+        LOGGER.info("{} moving to 'x,y' : {},{} and gather", character.getName(), map.getX(), map.getY());
+
+        if (validateIsRequireMovement(character, map)) {
+            CharacterMovementDataSchema result = moveToMap(character.getName(), map);
+            waitCooldown(result.getCooldown().getRemainingSeconds());
+        }
+        return gathering(character.getName());
+    }
+
 
     /**
      * Completes a task for the specified character and returns the associated reward.

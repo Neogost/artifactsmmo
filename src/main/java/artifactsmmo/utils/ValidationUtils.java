@@ -167,6 +167,9 @@ public class ValidationUtils {
     }
 
     public static String validateContentCode(String code) {
+        if(code == null) {
+            return null;
+        }
         if (!CONTENTCODE_PATTERN.matcher(code).matches()) {
             throw new IllegalArgumentException(String.format("Monster code should be in {} format.", CONTENTCODE_PATTERN.pattern()));
         }
@@ -174,6 +177,9 @@ public class ValidationUtils {
     }
 
     public static String validateCraftMaterialCode(String code) {
+        if(code == null) {
+            return null;
+        }
         if (!CRAFT_MATERIAL_PATTERN.matcher(code).matches()) {
             throw new IllegalArgumentException(String.format("Monster code should be in {} format.", CRAFT_MATERIAL_PATTERN.pattern()));
         }

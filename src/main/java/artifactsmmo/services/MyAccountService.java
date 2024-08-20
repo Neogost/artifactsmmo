@@ -1,6 +1,7 @@
 package artifactsmmo.services;
 
 import artifactsmmo.enums.ErrorCode;
+import artifactsmmo.exception.ItemsNotFoundException;
 import artifactsmmo.models.entity.Gold;
 import artifactsmmo.models.entity.ItemSimple;
 import artifactsmmo.models.response.BankItemsResponse;
@@ -123,7 +124,7 @@ public class MyAccountService {
             while (true) {
                 // Create URL with params
                 String url = UriComponentsBuilder.fromHttpUrl(restUtils.getMyBankItems())
-                        .queryParamIfPresent("codeItem", Optional.ofNullable(codeItem))
+                        .queryParamIfPresent("item_code", Optional.ofNullable(codeItem))
                         .queryParamIfPresent("page", Optional.of(page))
                         .queryParamIfPresent("size", Optional.of(size))
                         .encode()
@@ -148,7 +149,7 @@ public class MyAccountService {
             }
             return items;
         } catch (HttpClientErrorException e) {
-            LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage(), e);
+            LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage());
             handleException(e);
             return null;
         }
@@ -168,7 +169,7 @@ public class MyAccountService {
     private void handleException(HttpClientErrorException e) {
         switch (e.getStatusCode().value()) {
             case 404:
-                throw new RuntimeException(ErrorCode.ITEMS_NOT_FOUND.getReason(), e);
+                throw new ItemsNotFoundException(ErrorCode.ITEMS_NOT_FOUND.getReason());
             case 458:
                 throw new RuntimeException(ErrorCode.USE_DIFFERENT_PASSWORD.getReason(), e);
             default:

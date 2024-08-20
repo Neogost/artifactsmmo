@@ -37,7 +37,7 @@ public class RestUtils {
     String MY_CHARACTER_GE_SELL_ITEM = "my/%s/action/ge/sell";
     String MY_CHARACTER_GE_BUY_ITEM = "my/%s/action/ge/buy";
     String MY_CHARACTER_WITHDRAW_GOLD_BANK = "my/%s/action/bank/withdraw/gold";
-    String MY_CHARACTER_WITHDRAW_BANK = "my/%s/action/bank/withdraw/";
+    String MY_CHARACTER_WITHDRAW_BANK = "my/%s/action/bank/withdraw";
     String MY_CHARACTER_DEPOSITE_GOLD_BANK = "my/%s/action/bank/deposite/gold";
     String MY_CHARACTER_RECYCLING = "my/%s/action/recycling/";
     String MY_CHARACTER_UNEQUIP_ITEM = "my/%s/action/unequip/";
@@ -55,10 +55,10 @@ public class RestUtils {
     String MY_CHARACTER_GATHERING = "my/%s/action/gathering";
 
     String RESOURCES = "resources/";
-    String RESOURCE = "resource/{code}";
+    String RESOURCE = "resource/%s";
 
     String MONSTERS = "monsters/";
-    String MONSTER = "monsters/{code}";
+    String MONSTER = "monsters/%s";
 
     String ITEMS = "items/";
     /* %s = code */
@@ -116,11 +116,11 @@ public class RestUtils {
     }
 
     public String getCharacterUrl() {
-        return getDomain() + CHARACTERS_URL;
+        return getDomain() + CHARACTER_URL;
     }
 
     public String getAllCharacterUrl() {
-        return getDomain() + CHARACTER_URL;
+        return getDomain() + CHARACTERS_URL;
     }
 
     public String getMyCharacterFightUrl() {

@@ -1,16 +1,43 @@
 package artifactsmmo.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import artifactsmmo.enums.Skill;
+import artifactsmmo.enums.ItemType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
-public class ItemCraft {
+@ToString
+@AllArgsConstructor
+public class ItemCraft implements Serializable {
 
-    @JsonProperty("code")
+    private static final long serialVersionUID = 1L;
     private String code;
+    private int level;
+    private Skill skill;
+    private ItemType type;
+    private String subType;
+    private int quantityInBank;
+    private int quantityInInventory;
+    private int quantityTotalNeeded;
+    private int priority;
 
-    @JsonProperty("quantity")
-    private int quantity;
+    public int getQuantityTotal() {
+        return quantityInBank + quantityInInventory;
+    }
+
+    public boolean isComplete() {
+        return quantityTotalNeeded <= quantityInInventory + quantityInBank;
+    }
+
+
+    public void transfertFromBank(int quantity) {
+        quantityInInventory += quantity;
+        quantityInBank -= quantity;
+
+    }
 }

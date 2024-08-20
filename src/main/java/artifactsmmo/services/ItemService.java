@@ -4,6 +4,8 @@ import artifactsmmo.enums.ErrorCode;
 import artifactsmmo.models.entity.Item;
 import artifactsmmo.models.response.ItemResponse;
 import artifactsmmo.models.response.ItemsResponse;
+import artifactsmmo.models.response.MapResponse;
+import artifactsmmo.models.schema.SingleItemSchema;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,16 +119,20 @@ public class ItemService {
      * @throws HttpClientErrorException si une erreur HTTP survient lors de l'appel au service REST. Les erreurs sont
      *                                  loguées et traitées par la méthode {@link #handleException(HttpClientErrorException, String)}.
      */
-    public ItemResponse getItem(String code) {
+    public SingleItemSchema getItem(String code) {
         LOGGER.debug("Entry in getItem with parameter : code={}", code);
         try {
-            String url = String.format(restUtils.getResourceUrl(), code);
+            String url = String.format(restUtils.getItemUrl(), code);
             HttpEntity<String> entity = restUtils.entityHeaderWithoutToken();
 
             ResponseEntity<ItemResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, ItemResponse.class);
             LOGGER.info("GET {} : status : {}", url, response.getStatusCode());
 
-            return response.getBody();
+
+            return Optional.ofNullable(response.getBody())
+                    .map(ItemResponse::getSingleItemSchema)
+                    .orElse(null);
+
 
         } catch (HttpClientErrorException e) {
             LOGGER.error("Erreur lors de l'appel au service REST : {}", e.getMessage(), e);

@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class Map {
+
     @JsonProperty("name")
     private String name;
     @JsonProperty("skin")

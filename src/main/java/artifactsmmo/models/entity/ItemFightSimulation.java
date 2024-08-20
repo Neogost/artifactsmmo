@@ -5,16 +5,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ItemAdvanced extends Item{
+public class ItemFightSimulation extends Item{
 
     private Monster target;
     private double damageDealOnTarget;
 
-    public ItemAdvanced(Item item, Monster target, double damageDealOnTarget) {
+    public ItemFightSimulation(Item item, Monster target, double damageDealOnTarget) {
         super(item.getName(),
                 item.getCode(),
                 item.getLevel(),
-                item.getType(),
+                item.getItemType(),
                 item.getSubtype(),
                 item.getDescription(),
                 item.getEffects(),

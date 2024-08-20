@@ -2,6 +2,7 @@ package artifactsmmo.controllers;
 
 import artifactsmmo.models.entity.Server;
 import artifactsmmo.models.response.StatusResponse;
+import artifactsmmo.services.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class AccountController {
 
 
     @Autowired
-    private AccountController accountController;
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenController.class);
+    private AccountService accountController;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
     public void createAccount(String username, String password, String email) {
         LOGGER.info("Request to create the account {}  with the email {}", username, email);

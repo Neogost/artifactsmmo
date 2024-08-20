@@ -8,7 +8,7 @@ import artifactsmmo.exception.CharacterTransitionAlreadyInProgressException;
 import artifactsmmo.models.entity.Character;
 import artifactsmmo.models.schema.*;
 import artifactsmmo.models.response.*;
-import artifactsmmo.models.entity.MyCharactersResponse;
+import artifactsmmo.models.response.MyCharactersResponse;
 import artifactsmmo.utils.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

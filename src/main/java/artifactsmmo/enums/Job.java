@@ -1,6 +1,16 @@
 package artifactsmmo.enums;
 
-public enum Job {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+import java.io.Serializable;
+
+@Getter
+@ToString
+@AllArgsConstructor
+public enum Job implements Serializable {
 
     WEAPONCRAFTING("weaponcrafting"),
     GEARCRAFTING("gearcrafting"),
@@ -8,14 +18,22 @@ public enum Job {
     COOKING("cooking"),
     WOODCUTTING("woodcutting"),
     MINING("mining"),
-    FIGHTER("fighter");
+    FIGHTER("fighter"),
+    TASK_FIGHTER("task_fighter"),
+    FISHING("fishing");
 
     private final String value;
+    private static final long serialVersionUID = 1L;
 
-    Job(String value) {
-        this.value = value;
+    @JsonCreator
+    public static Job fromValue(String value) {
+        for (Job skill : Job.values()) {
+            if (skill.value.equalsIgnoreCase(value)) {
+                return skill;
+            }
+        }
+        throw new IllegalArgumentException("Unknown skill : " + value);
     }
-
 
     @Override
     public String toString() {

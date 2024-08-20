@@ -1,5 +1,6 @@
 package artifactsmmo.controllers;
 
+import artifactsmmo.exception.ItemsNotFoundException;
 import artifactsmmo.models.entity.Gold;
 import artifactsmmo.models.entity.ItemSimple;
 import artifactsmmo.services.MyAccountService;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static artifactsmmo.utils.ValidationUtils.*;
@@ -41,6 +43,20 @@ public class MyAccountController {
 
     }
 
+    public ItemSimple getBankItem(String code){
+        LOGGER.info("Getting the item {} bank items", code);
+        try {
+            List<ItemSimple> items = getBankItems(code,1,50);
+            if(!items.isEmpty() && items.size() > 1) {
+                LOGGER.warn("Wanted {} item, getting {} items", code, items.size());
+            }
+            return items.stream().findFirst().orElse(null);
+        } catch (RuntimeException e) {
+            LOGGER.error("Error fetching item in bank : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Retrieves bank items based on the provided parameters.
      * <p>
@@ -66,6 +82,9 @@ public class MyAccountController {
             validatePageSize(size);
 
             return myAccountService.getBankItems(code, page, size);
+        } catch (ItemsNotFoundException e) {
+            LOGGER.info("Item {} not found in bank.", code);
+            return new ArrayList<>();
         } catch (RuntimeException e) {
             LOGGER.error("Error fetching items in bank : {}", e.getMessage(), e);
             throw new RuntimeException(e);

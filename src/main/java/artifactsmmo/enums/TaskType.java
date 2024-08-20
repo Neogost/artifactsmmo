@@ -4,26 +4,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
 @ToString
-public enum ContentType {
-    MONSTER("monster"),
-    RESOURCE("resource"),
-    WORKSHOP("workshop"),
-    BANK("bank"),
-    GRAND_EXCHANGE("grand_exchange"),
-    TASKS_MASTER("tasks_master");
+public enum TaskType {
+
+    MONSTERS("monsters"),
+    RESOURCES("resources"),
+    CRAFTS("crafts");
 
     private final String value;
 
 
     @JsonCreator
-    public static ContentType fromValue(String value) {
-        for (ContentType type : ContentType.values()) {
+    public static TaskType fromValue(String value) {
+        for (TaskType type : TaskType.values()) {
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
             }
@@ -36,3 +33,4 @@ public enum ContentType {
         return value;
     }
 }
+

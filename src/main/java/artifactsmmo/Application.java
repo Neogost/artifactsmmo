@@ -1,27 +1,23 @@
 package artifactsmmo;
 
 import artifactsmmo.controllers.*;
-import artifactsmmo.enums.ContentType;
-import artifactsmmo.enums.Job;
-import artifactsmmo.enums.Type;
+import artifactsmmo.enums.*;
 import artifactsmmo.models.entity.*;
 import artifactsmmo.models.entity.Character;
-import artifactsmmo.models.response.*;
-import artifactsmmo.models.schema.BankItemSchema;
-import artifactsmmo.models.schema.CharacterFightDataSchema;
-import org.jetbrains.annotations.NotNull;
+import artifactsmmo.models.entity.Map;
+import artifactsmmo.models.schema.SingleItemSchema;
+import artifactsmmo.utils.DateUtils;
+import artifactsmmo.utils.ItemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.CollectionUtils;
 
+import java.io.*;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +25,7 @@ import java.util.concurrent.Executors;
 @SpringBootApplication
 public class Application {
 
+    private static File database = new File("./database.txt");
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     private static ApplicationContext context;
@@ -39,16 +36,17 @@ public class Application {
     private static MonsterController monsterController;
     private static ResourceController resourceController;
     private static MyAccountController myAccountController;
+    private static AccountController accountController;
 
     private static Map taskMasterPosition;
     private static Map bankPosition;
     private static Map weaponcraftingPosition;
+    private static Map workshopMiningPosition;
+
     private static List<Map> maps;
     private static List<Item> items;
-    private static List<Monster> monsters;
-    private static List<Resource> resources;
-    private static List<ItemSimple> bankItems;
 
+    private static Memory memory;
 
     /**
      * Point d'entrée principal de l'application.
@@ -77,57 +75,61 @@ public class Application {
         characterController = context.getBean(CharacterController.class);
         resourceController = context.getBean(ResourceController.class);
         myAccountController = context.getBean(MyAccountController.class);
+        accountController = context.getBean(AccountController.class);
 
-        // Charge all Maps
-        maps = getMaps();
-        // Charge all items
-        items = getAllItems();
-        // Charge all monsters
-        monsters = getAllMonsters();
-        // Charge all resources
-        resources = getAllResources();
-        // Charge all bank items
-        bankItems = getAllBankItems();
+        getServerStatus();
+
+        maps = mapController.getAllMaps();
+        items = itemControler.getAllItems();
 
         // Find the TaskMaster on the map
         taskMasterPosition = maps.stream().filter(m -> m.getContent() != null
-                && ContentType.TASKS_MASTER.getValue().equals(m.getContent().getType())).findFirst().orElseThrow(NoSuchElementException::new);
+                && ContentType.TASKS_MASTER == m.getContent().getType()).findFirst().orElseThrow(NoSuchElementException::new);
 
         // Find the bank on the map
         bankPosition = maps.stream().filter(m -> m.getContent() != null
-                && ContentType.BANK.getValue().equals(m.getContent().getType())).findFirst().orElseThrow(NoSuchElementException::new);
+                && ContentType.BANK == m.getContent().getType()).findFirst().orElseThrow(NoSuchElementException::new);
 
         // Find the weapon crafting on the map
         weaponcraftingPosition = maps.stream().filter(m -> m.getContent() != null
-            && m.getContent().getCode().equals("weaponcrafting")).findFirst().orElseThrow(NoSuchElementException::new);
+                && m.getContent().getCode().equals(Skill.WEAPONCRAFTING.getValue())).findFirst().orElseThrow(NoSuchElementException::new);
+
+        // Find the weapon crafting on the map
+        workshopMiningPosition = maps.stream().filter(m -> m.getContent() != null
+                && m.getContent().getType() == ContentType.WORKSHOP
+                && m.getContent().getCode().equals(Skill.MINING.getValue())).findFirst().orElseThrow(NoSuchElementException::new);
 
         // All the game is here
         gameLoop(context);
 
     }
 
-    /**
-     * Lance la boucle principale du jeu en exécutant une boucle de jeu pour chaque personnage du joueur dans des threads séparés.
-     *
-     * @param context le contexte de l'application Spring utilisé pour récupérer les personnages du joueur
-     * @throws InterruptedException si un thread est interrompu pendant l'exécution
-     *
-     *                              <p>Cette méthode fonctionne comme suit :</p>
-     *                              <ul>
-     *                                  <li>Récupère la liste des personnages du joueur via le contexte Spring.</li>
-     *                                  <li>Crée un pool de threads avec un nombre fixe de threads égal au nombre de personnages du joueur.</li>
-     *                                  <li>Pour chaque personnage, lance une tâche asynchrone dans un thread séparé. Cette tâche exécute une boucle de jeu dédiée au personnage.</li>
-     *                                  <li>Chaque tâche asynchrone sauvegarde les données de l'historique du personnage et appelle la méthode {@code characterGameLoop} pour gérer les actions du personnage.</li>
-     *                                  <li>Attend que toutes les tâches asynchrones soient terminées en utilisant {@code CompletableFuture.allOf().join()}.</li>
-     *                                  <li>Ferme le pool de threads une fois toutes les tâches terminées.</li>
-     *                              </ul>
-     *
-     *                              <p>Cette méthode permet de gérer plusieurs personnages simultanément en parallèle, ce qui améliore les performances de l'application
-     *                              lorsque plusieurs personnages doivent être contrôlés de manière indépendante.</p>
-     */
-    public static void gameLoop(ApplicationContext context) throws InterruptedException {
-        List<Character> characters = getMyCharacters();
+    private static void getServerStatus() throws InterruptedException {
+        Server server = accountController.getStatus();
+        LOGGER.info("======================================================");
+        LOGGER.info("State of the server : {}", server.getStatus());
+        LOGGER.info("Version : {}", server.getVersion());
+        LOGGER.info("Number of characters online : {}", server.getCharactersOnline());
+        for (Announcement announcement : server.getAnnouncements()) {
+            LOGGER.info("Date of creation : {}", announcement.getCreatedAt());
+            LOGGER.info("Annonce : {}", announcement.getMessage());
+        }
+        LOGGER.info("Next wipe : {}", server.getNextWipe());
+        LOGGER.info("======================================================");
+        // Sleep to take time to read
+        Thread.sleep(5000);
+    }
 
+    public static void gameLoop(ApplicationContext context) throws InterruptedException {
+        List<Character> characters = myCharactersController.getMyCharacters();
+
+        // TODO : Extract data from file database.txt
+        //memory = readFromFile();
+
+        if (memory == null) {
+            memory = new Memory();
+            memory.initialiseAllMemory(characters);
+        }
         // 1 Thread by character
         ExecutorService executorService = Executors.newFixedThreadPool(characters.size());
         List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -136,9 +138,9 @@ public class Application {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 try {
                     // Save data and transmit it to another loop
-                    Memory memory = new Memory();
                     // All action from the character
                     characterGameLoop(character, memory);
+                    // TODO : Save data in file database.txt
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -152,316 +154,267 @@ public class Application {
 
     private static void characterGameLoop(Character character, Memory memory) throws InterruptedException {
         String name = character.getName();
-        // update character data
-        character = characterController.getCharacter(name);
-        // update bank data
-        bankItems = getAllBankItems();
+        CharacterMemory characterMemory = memory.getCharacterMemory(character.getName());
+        do {
+            // update character data
+            character = characterController.getCharacter(name);
+            waitUntilAvailable(character);
 
-        // Wait until character available
-        waitUntilAvailable(character);
-
-        // Need to deposit item in bank ?
-        if (character.inventoryFull()) {
-            deposeItemInBank(character);
-        }
-
-        // The character have no mission, take once
-        if (character.getTaskTotal() == 0) {
-            // The character starting by asking a quest to the TaskMaster
-            myCharactersController.moveAndTakeNewTask(character, taskMasterPosition);
-        }
-        // The character have 1 mission and it's not finish
-        else if (character.taskInProgress()
-                && memory.canDoQuest() &&
-                memory.getJob() == Job.FIGHTER) {
-
-            performQuestAction(character, memory);
-
-        }
-        // The mission is complete
-        else if (character.taskComplete()) {
-            completeQuest(character);
-        }
-        // Can't do the quest do something else to be stronger
-        else {
-            LOGGER.info("{} lose a lot of fight ({}% win), need to do something else.", name, memory.ratioVictory());
-
-            // Select an item to craft
-            if (memory.getCraftItemToDO() == null) {
-                LOGGER.info("{} find an item to craft to be stronger !", name);
-                findCraftableItem(character, memory);
-
+            // Take a task
+            if (!character.haveTask()) {
+                myCharactersController.moveAndTakeNewTask(character, taskMasterPosition);
             }
 
-            // Est ce que tout les composants sont dans mon inventaire ou en banque ?
-            // Est ce que le premier item qui doit etre fait a tout ces composants ?$
-            // TODO : Revoir toute cette logique, il faut les quantité de chaque item !!
-            Item itemToDo = memory.prioriseItemToCraft();
-            if (itemToDo.getCraft() != null) {
-                LOGGER.debug("{} inspect the task to do");
-                List<ItemInventory> allItemsNeededCollected = new ArrayList<>();
-                int quantityOfPart = itemToDo.getCraft().getItems().size();
-                for (ItemCraft itemCraft : itemToDo.getCraft().getItems()) {
-                    String code  = itemCraft.getCode();
-                    int quantity = itemCraft.getQuantity();
-                    ItemInventory itemInventory = character.getInventory().stream().filter(i -> i.getCode().equals(code) && i.getQuantity() == quantity).findFirst().orElse(null);
-                    if(itemInventory != null) {
-                        LOGGER.debug("{} and this item {} have {} done !", name, itemToDo.getCode(), itemInventory.getCode());
-                        allItemsNeededCollected.add(itemInventory);
-                    }
-                }
-                if(quantityOfPart == allItemsNeededCollected.size()) {
-                    LOGGER.info("Item {} ready to be crafted", itemToDo.getCode());
-                    if(itemToDo.getType().equals("weapon")) {
-                        if(!character.onMap(weaponcraftingPosition)) {
-                            myCharactersController.moveToMap(name, weaponcraftingPosition);
-                        } else {
-                            myCharactersController.craft(name, new ItemSimple(itemToDo.getCode(), 1));
-                        }
-                    }
-                }
-            }
-            // Do a job to complete the item
-            LOGGER.info("{} is going to collect ressources", name);
-            if (memory.getJob() == null) {
-                // Priorisation of collect job
-                memory.takeAJob(name);
-                LOGGER.info("{} is a {} now !", name, memory.getJob().toString());
+            // Can equip best item ?
+
+
+            // Choose a job
+            if (!characterMemory.haveJob()) {
+                chooseJob(character, characterMemory);
             }
 
-            // Do the job
-            if (memory.getJob() != Job.FIGHTER) {
-                jobSkill(character, memory);
+            // FIXME : A retirer
+            if (characterMemory.getJob() == null) {
+                LOGGER.error("{} haven't job.", name);
+                //break;
             } else {
-                jobFight(character, memory);
-            }
-        }
+                LOGGER.info("{} is a {}.", name, characterMemory.getJob().toString());
 
-        characterGameLoop(character, memory);
-    }
+                // Target : craft this item.
+                ItemCraft item = itemCraftToDo(characterMemory.getCraftPart());
+                if (item == null) {
+                    Craft craft = Optional.ofNullable(itemControler.getItem(item.getCode()).getItem().getCraft()).orElse(new Craft());
+                    switch (characterMemory.getJob()) {
+                        case FIGHTER:
+                            break;
+                        case MINING:
 
-    private static void jobFight(Character character, Memory memory) throws InterruptedException {
-        Item itemToCreate = memory.prioriseItemToCraft();
+                            if (character.getMiningLevel() >= item.getLevel()) {
 
-        // What monster trop the item
-        Monster monster = monsters.stream().filter(
-                m -> m.getDrops().stream().anyMatch(d -> d.getCode().equals(itemToCreate.getCode()))
-        ).findFirst().orElseThrow(NoSuchElementException::new);
-
-        // Get where the item come from
-        Map mapToCollect = maps.stream().filter(
-                m -> m.getContent() != null && m.getContent().getCode().equals(monster.getCode())
-        ).findFirst().orElseThrow(NoSuchElementException::new);
-
-        if (!character.onMap(mapToCollect)) {
-            myCharactersController.moveToMap(character.getName(), mapToCollect);
-        } else {
-            myCharactersController.fight(character.getName());
-        }
-    }
-
-    private static void jobSkill(Character character, Memory memory) throws InterruptedException {
-
-        Item itemToCreate = memory.prioriseItemToCraft();
-        // Get what resource is needed
-        Resource resource = resources.stream().filter(
-                r -> r.getDrops().stream().anyMatch(d -> d.getCode().equals(itemToCreate.getCode()))
-        ).findFirst().orElseThrow(NoSuchElementException::new);
-
-        // Get where the resource come from
-        Map mapToCollect = maps.stream().filter(
-                m -> m.getContent() != null && m.getContent().getCode().equals(resource.getCode())
-        ).findFirst().orElseThrow(NoSuchElementException::new);
-
-        if (!character.onMap(mapToCollect)) {
-            myCharactersController.moveToMap(character.getName(), mapToCollect);
-        } else {
-            myCharactersController.gathering(character.getName());
-        }
-    }
-
-    private static void findCraftableItem(Character character, Memory memory) {
-
-        // Find weapon than I can use to beat the monster
-        Monster monster = memory.getQuestMonster();
-        List<Item> itemInMyRange = weaponInMyRange(character);
-
-        // Estime the best weapons
-        List<ItemAdvanced> itemAdvanced = simulateItemsOnMonster(itemInMyRange, character, monster);
-        ItemAdvanced itemSelected = itemAdvanced.stream().max(Comparator.comparing(ItemAdvanced::getDamageDealOnTarget)).orElseThrow(NoSuchElementException::new);
-        LOGGER.info("{} is the best item to do to beat {} with {} damages", itemSelected.getName(), itemSelected.getTarget().getName(), itemSelected.getDamageDealOnTarget());
-
-        // Extract composent of the items
-        List<Item> craftItemNeeded = craftComposent(itemSelected.getCraft());
-
-        // Save data
-        memory.setCraftItemToDO(itemSelected);
-        memory.setItemNeededToCraft(craftItemNeeded);
-    }
-
-    private static List<Item> weaponInMyRange(Character character) {
-        return items.stream().filter(
-                i -> i.getLevel() <= character.getLevel()
-                        && i.getType().equals(Type.WEAPON.getValue())
-        ).toList();
-    }
-
-
-    private static List<ItemAdvanced> simulateItemsOnMonster(@NotNull List<Item> items, @NotNull Character character, @NotNull Monster monster) {
-        List<ItemAdvanced> itemAdvanceds = new ArrayList<>();
-        for (Item item : items) {
-            double damageDeal = 0;
-            // Simulate each effect of each item on the monster
-            for (Effect effect : item.getEffects()) {
-                switch (effect.getName()) {
-                    case "attack_air":
-                        damageDeal += effect.getValue() + (effect.getValue() * (character.getDmgAir() * 0.01)) * (1 - monster.getResAir() * 0.01);
-                        break;
-                    case "attack_earth":
-                        damageDeal += (effect.getValue() + (effect.getValue() * (character.getDmgEarth() * 0.01))) * (1 - monster.getResEarth() * 0.01);
-                        break;
-                    case "attack_water":
-                        damageDeal += (effect.getValue() + (effect.getValue() * (character.getDmgWater() * 0.01))) * (1 - monster.getResWater() * 0.01);
-                        break;
-                    case "attack_fire":
-                        damageDeal += (effect.getValue() + (effect.getValue() * (character.getDmgFire() * 0.01))) * (1 - monster.getResFire() * 0.01);
-                        break;
-                    default:
-                        LOGGER.warn("Effect {} not supported", effect.getName());
+                                // si c'est un minerai a aller chercher
+                                if (item.getSubType().equals("mining")) {
+                                }
+                                // Item a craft
+                                else {
+                                    // Get craft to do item
+                                    // Tout est dans l'inventaire
+                                    if (character.isInInventory(craft, item.getQuantityTotalNeeded())) {
+                                        myCharactersController.moveAndCraft(character, workshopMiningPosition, new ItemSimple(item.getCode(), item.getQuantityTotalNeeded()));
+                                        characterMemory.setJob(null);
+                                    }
+                                    // Aller chercher les items.
+                                    else {
+                                        getItemsCraftFromBank(character, craft, item);
+                                    }
+                                }
+                            }
+                            break;
+                        case WEAPONCRAFTING:
+                            // have suffisant level
+                            if (character.getWeaponcraftingLevel() >= item.getLevel()) {
+                                if (character.isInInventory(craft, item.getQuantityTotalNeeded())) {
+                                    myCharactersController.moveAndCraft(character, weaponcraftingPosition, new ItemSimple(item.getCode(), item.getQuantityTotalNeeded()));
+                                    characterMemory.setJob(null);
+                                } else {
+                                    getItemsCraftFromBank(character, craft, item);
+                                }
+                            }
+                        default:
+                            characterMemory.setJob(null);
+                            LOGGER.warn("{} haven't works to do.", name);
+                    }
                 }
             }
-            itemAdvanceds.add(new ItemAdvanced(item, monster, damageDeal));
-            LOGGER.info("Item {} deal {} damages against {}.", item.getCode(), damageDeal, monster.getName());
-        }
-        return itemAdvanceds;
+            // TODO : Save all memory data to next execution of the application.
+           // writeToFile();
+        } while (true);
     }
 
-    private static List<Item> craftComposent(Craft craft) {
-        List<Item> items = new ArrayList<>();
-        for (ItemCraft itemPart : craft.getItems()) {
-            ItemResponse response = itemControler.getItem(itemPart.getCode());
-            Item item = response.getSingleItemSchema().getItem();
-            items.add(item);
-            if (item.getCraft() != null) {
-                items.addAll(craftComposent(item.getCraft()));
+
+    public static void getItemsCraftFromBank(Character character, Craft craft, ItemCraft itemToDo) throws InterruptedException {
+        for (ItemSimple itemToWithdraw : craft.getItems()) {
+            ItemInventory itemInventory = character.getInventory().stream().filter(i -> i.getCode().equals(itemToWithdraw.getCode())).findFirst().orElse(null);
+            if (itemInventory != null) {
+                itemToWithdraw.setQuantity(itemToWithdraw.getQuantity() * itemToDo.getQuantityTotalNeeded() - itemInventory.getQuantity());
+            } else {
+                itemToWithdraw.setQuantity(itemToWithdraw.getQuantity() * itemToDo.getQuantityTotalNeeded());
             }
-        }
-        return items;
-    }
 
-    private static void deposeItemInBank(Character character) throws InterruptedException {
-
-        // Is not in the bank
-        if (!character.onMap(bankPosition)) {
-            myCharactersController.moveToMap(character.getName(), bankPosition);
-        }
-        // Is in the bank
-        else {
-            deposeAllInBank(character);
+            myCharactersController.moveAndWithdrawBankItem(character, bankPosition, itemToWithdraw);
+            itemToDo.transfertFromBank(itemToWithdraw.getQuantity());
         }
     }
 
-    private static void completeQuest(Character character) throws InterruptedException {
+    private static void chooseJob(Character character, CharacterMemory characterMemory) {
+        String monsterCode = character.getTask();
+        Monster monster = monsterController.getMonster(monsterCode);
 
-        if (!character.onMap(taskMasterPosition)) {
-            myCharactersController.moveToMap(character.getName(), taskMasterPosition);
-        } else {
-            myCharactersController.completeTask(character.getName());
-        }
-    }
-
-    private static void waitUntilAvailable(Character character) throws InterruptedException {
-
-        int cooldown = character.getCooldown();
-        if (cooldown > 0 && character.getCooldownExpiration().isAfter(ZonedDateTime.now())) {
-            LOGGER.info("{} cooldown : {}sec", character.getName(), cooldown);
-            Thread.sleep(cooldown * 1000);
-        }
-        LOGGER.info("{} quest {} / {}", character.getName(), character.getTaskProgress(), character.getTaskTotal());
-
-    }
-
-    private static void performQuestAction(Character character, Memory memory) throws InterruptedException {
-        String name = character.getName();
+        // Can do the quest ?
         switch (character.getTaskType()) {
-            case "monsters":
-                Map monsterMap = maps.stream().filter(m -> m.getContent() != null && character.getTask().equals(m.getContent().getCode())).findFirst().orElseThrow(NoSuchElementException::new);
-                Monster monster = monsters.stream().filter(m -> m.getCode().equals(character.getTask())).findFirst().orElseThrow(NoSuchElementException::new);
-                // Save the monster information for this quest
-                memory.setQuestMonster(monster);
-
-                // If not on map, go to
-                if (!character.onMap(monsterMap)) {
-                    myCharactersController.moveToMap(name, monsterMap);
-                }
-                // On the map, fight !
-                else {
-                    CharacterFightDataSchema response = myCharactersController.fight(name);
-                    String fightResult = response.getFight().getResult();
-                    // Save data
-                    memory.addFightQuest(fightResult);
-                    memory.updateJob();
-
-                    int xp = response.getFight().getXp();
-                    LOGGER.info("{} {} the fight against {} and win {} xp.", name, fightResult, monster.getName(), xp);
-
+            case MONSTERS:
+                // Can beat the monster ?
+                boolean victory = character.simulateFight(monster);
+                if (victory) {
+                    characterMemory.setJob(Job.TASK_FIGHTER);
                 }
                 break;
             default:
-                LOGGER.warn("Default choice for task assignation");
+                LOGGER.error("{} have a no supported task.", character.getName());
+
+        }
+        if (characterMemory.haveJob()) {
+            LOGGER.info("{} can do the task. {} is now a {}", character.getName(), character.getName(), characterMemory.getJob());
+            return;
+        }
+        LOGGER.info("{} can't do the task. Try to find item in inventory.", character.getName());
+
+        // Find Item in inventory who upgrade character stuff
+        // Save item to equip
+
+
+        LOGGER.info("{} can't equip new item. Try to craft something.");
+        // Find thing to do to upgrade stuff
+        improveStuff(character, characterMemory, monster);
+
+    }
+
+    public static void improveStuff(Character character, CharacterMemory characterMemory, Monster targetedMonster) {
+
+        // Weapon
+        List<ItemFightSimulation> weapons = ItemUtils.simulateWeaponOnMonster(items, character, targetedMonster);
+        ItemFightSimulation bestWeapon = weapons.stream().max(Comparator.comparing(ItemFightSimulation::getDamageDealOnTarget)).orElseThrow(NoSuchElementException::new);
+
+        List<ItemCraft> craftsPart = decomposeCraft(bestWeapon, null, 0);
+        LOGGER.info("{} have to craft {} items to get {}", character.getName(), craftsPart.size(), bestWeapon.getName());
+        // Comparer avec l'inventaire + bank
+        findInInventoryAndBankCraftPart(character, craftsPart);
+
+        // Save
+        characterMemory.setTargetCraft(itemControler.getItem(bestWeapon.getCode()).getItem());
+        characterMemory.setCraftPart(craftsPart);
+        // Partir a la recherche des composants restants
+
+        ItemCraft priority = itemCraftToDo(craftsPart);
+
+        if (priority != null && priority.getSkill() != null) {
+            characterMemory.setJob(Job.fromValue(priority.getSkill().getValue()));
+        }
+    }
+
+    /**
+     * Sélectionne l'élément `ItemCraft` à traiter en priorité parmi une liste donnée.
+     *
+     * <p>Cette méthode prend une liste d'objets `ItemCraft`, filtre ceux dont la quantité totale est
+     * inférieure à la quantité totale nécessaire, et retourne celui ayant la priorité la plus élevée.</p>
+     *
+     * @param craftsPart Une liste d'objets `ItemCraft` représentant les éléments à vérifier.
+     * @return L'objet `ItemCraft` avec la plus haute priorité parmi ceux dont la quantité totale est inférieure à la quantité totale nécessaire.
+     * @throws NoSuchElementException si aucun élément ne correspond aux critères de filtrage.
+     */
+    private static ItemCraft itemCraftToDo(List<ItemCraft> craftsPart) {
+        return craftsPart.stream().filter(c -> c.getQuantityTotal() < c.getQuantityTotalNeeded()).max(Comparator.comparing(c -> c.getPriority())).orElse(null);
+    }
+
+
+    private static void findInInventoryAndBankCraftPart(Character character, List<ItemCraft> craftsPart) {
+        for (ItemCraft itemCraft : craftsPart) {
+            ItemSimple itemInBank = myAccountController.getBankItem(itemCraft.getCode());
+            ItemInventory itemInInventory = character.getInventory().stream().filter(i -> i.getCode().equals(itemCraft.getCode())).findFirst().orElse(null);
+
+            int quantityInInventory = itemInInventory != null ? itemInInventory.getQuantity() : 0;
+            int quantityInBank = itemInBank != null ? itemInBank.getQuantity() : 0;
+
+            itemCraft.setQuantityInBank(quantityInBank);
+            itemCraft.setQuantityInInventory(quantityInInventory);
+            LOGGER.info("Item {} found in {} quantity in Inventory and {} quantity in Bank. Total : {}",
+                    itemCraft.getCode(),
+                    itemCraft.getQuantityInInventory(),
+                    itemCraft.getQuantityInBank(),
+                    itemCraft.getQuantityTotal());
         }
     }
 
 
-    private static void deposeAllInBank(Character character) throws InterruptedException {
-        for (ItemInventory item : character.getInventory()) {
-            if (item.getQuantity() > 0) {
-                BankItemSchema response = myCharactersController.deposeItemInBank(character.getName(), item, item.getQuantity());
-                int cooldown = response.getCooldown().getRemainingSeconds();
-                Thread.sleep(cooldown * 1000);
+    public static List<ItemCraft> decomposeCraft(Item itemToCraft, Craft craft, int priority) {
+        List<ItemCraft> items = new ArrayList<>();
+        if (itemToCraft != null) {
+            items.add(new ItemCraft(itemToCraft.getCode(),
+                    itemToCraft.getLevel(),
+                    itemToCraft.getCraft().getSkill(),
+                    itemToCraft.getItemType(),
+                    itemToCraft.getSubtype(),
+                    0,
+                    0,
+                    1,
+                    priority++));
+            craft = itemToCraft.getCraft();
+        }
+        for (ItemSimple itemSimple : craft.getItems()) {
+            SingleItemSchema singleItemSchema = itemControler.getItem(itemSimple.getCode());
+            Item item = singleItemSchema.getItem();
+
+            items.add(new ItemCraft(itemSimple.getCode(),
+                    item.getLevel(),
+                    item.getCraft() != null ? item.getCraft().getSkill() : null,
+                    item.getItemType(),
+                    item.getSubtype(),
+                    0,
+                    0,
+                    itemSimple.getQuantity(),
+                    priority));
+
+            if (item.getCraft() != null) {
+                items.addAll(decomposeCraft(null, item.getCraft(), ++priority));
             }
         }
-    }
 
-
-    private static List<Map> getMaps() {
-        List<Map> maps = mapController.getAllMaps(null, null, 1, 100);
-        if (CollectionUtils.isEmpty(maps))
-            LOGGER.error("Maps is empty");
-        return maps;
-    }
-
-    private static List<Character> getMyCharacters() {
-        return myCharactersController.getMyCharacters();
-
-    }
-
-
-    private static List<Item> getAllItems() {
-        List<Item> items = itemControler.getAllItems();
-        if (CollectionUtils.isEmpty(items))
-            LOGGER.error("Items is empty");
         return items;
     }
 
-    private static List<Monster> getAllMonsters() {
-        List<Monster> monsters = monsterController.getAllMonsters();
-        if (CollectionUtils.isEmpty(monsters))
-            LOGGER.error("Monsters is empty");
-        return monsters;
+
+    private static void waitUntilAvailable(Character character) throws InterruptedException {
+
+        long cooldown = DateUtils.zonedDateTimeDifference(character.getCooldownExpiration(), ZonedDateTime.now(), ChronoUnit.SECONDS);
+        if (cooldown > 0) {
+            long wait = character.getCooldown();
+            LOGGER.info("{} is in cooldown for {} secondes.", character.getName(), wait);
+            Thread.sleep(wait * 1000);
+        }
     }
 
-    public static List<Resource> getAllResources() {
-        List<Resource> resources = resourceController.getAllResources();
-        if (CollectionUtils.isEmpty(resources))
-            LOGGER.error("Resources is empty");
-        return resources;
+
+    public static void writeToFile() {
+        try (FileOutputStream fos = new FileOutputStream(database);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(memory);
+            oos.flush();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+
+        } catch (NotSerializableException nse) {
+            LOGGER.error("Error during save memory in file {}", database.getName());
+            //do something
+        } catch (IOException eio) {
+            //do something
+        }
     }
 
-    public static List<ItemSimple> getAllBankItems() {
-        List<ItemSimple> itemSimples = myAccountController.getBankItems();
-        if (CollectionUtils.isEmpty(itemSimples))
-            LOGGER.warn("bank items is empty");
-        return itemSimples;
+
+    public static Memory readFromFile() {
+        Memory data = null;
+
+        try  {
+            FileInputStream fis = new FileInputStream(database);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            data = (Memory) ois.readObject();
+            ois.close();
+            fis.close();
+        } catch (FileNotFoundException e) {
+            LOGGER.warn("Database not found");
+            return null;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return data;
     }
 }

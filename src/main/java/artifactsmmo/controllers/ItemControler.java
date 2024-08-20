@@ -1,9 +1,10 @@
 package artifactsmmo.controllers;
 
 import artifactsmmo.enums.CraftSkill;
-import artifactsmmo.enums.Type;
+import artifactsmmo.enums.ItemType;
 import artifactsmmo.models.entity.Item;
 import artifactsmmo.models.response.ItemResponse;
+import artifactsmmo.models.schema.SingleItemSchema;
 import artifactsmmo.services.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,13 +73,13 @@ public class ItemControler {
      *                      Must be a positive integer.
      * @param size          the number of items per page.
      *                      Must be a positive integer.
-     * @param type          the {@link Type} of items to filter by.
+     * @param itemType          the {@link ItemType} of items to filter by.
      *                      Can be {@code null} to include all types.
      * @return a {@link List} of {@link Item} objects that match the specified filters and pagination parameters.
      * @throws IllegalArgumentException if any of the parameters are invalid, such as negative page numbers, sizes, or levels,
      *                                  or if {@code minLevel} is greater than {@code maxLevel}.
      */
-    public List<Item> getAllItems(String craftMaterial, CraftSkill craftSkill, int maxLevel, int minLevel, String name, int page, int size, Type type) {
+    public List<Item> getAllItems(String craftMaterial, CraftSkill craftSkill, int maxLevel, int minLevel, String name, int page, int size, ItemType itemType) {
         LOGGER.info("Getting the all items.");
         try {
             validatePage(page);
@@ -89,7 +90,7 @@ public class ItemControler {
             validateCharacterName(name);
             validateCraftMaterialCode(craftMaterial);
 
-            return itemService.getAllItems(craftMaterial, craftSkill.getValue(), maxLevel, minLevel, name, page, size, type.getValue());
+            return itemService.getAllItems(craftMaterial, craftSkill.getValue(), maxLevel, minLevel, name, page, size, itemType.getValue());
         } catch (RuntimeException e) {
             LOGGER.error("Error fetching items : {}", e.getMessage(), e);
             throw new RuntimeException(e);
@@ -108,7 +109,7 @@ public class ItemControler {
      * @return an {@link ItemResponse} object representing the item with the specified code.
      * @throws IllegalArgumentException if the item code is {@code null} or empty.
      */
-    public ItemResponse getItem(String code) {
+    public SingleItemSchema getItem(String code) {
         LOGGER.info("Getting item {}", code);
         try {
             validateItemCode(code);
